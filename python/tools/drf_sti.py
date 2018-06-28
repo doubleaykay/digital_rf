@@ -195,25 +195,24 @@ class DataPlotter(object):
             vmax = numpy.real(numpy.median(
                 Pss) + (numpy.max(Pss) - numpy.median(Pss)) * 0.61803398875 + 50.0)
 
-            if self.control.zaxis:
+            if (self.control.zaxis):
                 vmin = int(string.split(self.control.zaxis, ':')[0])
                 vmax = int(string.split(self.control.zaxis, ':')[1])
+            if self.control.scale:
+                scale_type = str(self.control.scale)
+                if scale_type == "595":
+                    vmin = numpy.real(numpy.percentile(Pss, 5))
+                    vmax = numpy.real(numpy.percentile(Pss, 95))
+                if scale_type == "mm":
+                    vmin = numpy.real(numpy.min(Pss))
+                    vmax = numpy.real(numpy.max(Pss))
             else:
                 vmin = numpy.real(numpy.median(Pss) - 6.0)
                 vmax = numpy.real(numpy.median(
                     Pss) + (numpy.max(Pss) - numpy.median(Pss)) * 0.61803398875 + 50.0)
 
-            vp0 = numpy.real(numpy.percentile(Pss, 0))
-            vp100 = numpy.real(numpy.percentile(Pss, 100))
-            vp5 = numpy.real(numpy.percentile(Pss, 5))
-            vp95 = numpy.real(numpy.percentile(Pss, 95))
-            vi = numpy.real(numpy.min(Pss))
-            va = numpy.real(numpy.max(Pss))
-
-            #set vmin and vmax to any of the following options:
-            #vp0, vp100, vp5, vp95, v1, va, vmax, vmin
             im = ax.imshow(sti_psd_data, cmap=self.control.colormap, origin='lower', extent=extent,
-                           interpolation='nearest', vmin=vp5, vmax=vp95, aspect='auto')
+                           interpolation='nearest', vmin=vmin, vmax=vmax, aspect='auto')
 
             ax.set_ylabel('f (Hz)', fontsize=8)
 
@@ -344,6 +343,8 @@ def parse_command_line(str_input=None):
                       default=False, help="y axis range e.g. -10000:10000")
     parser.add_option("--colormap", dest="colormap",
                       default="jet", help="define colormap")
+    parser.add_option("--scale", dest="scale", default=None,
+                      type="string", help="specify custom zaxis scale calculation: 595, mm")
     if str_input is None:
         (options, args) = parser.parse_args()
     else:
