@@ -203,8 +203,17 @@ class DataPlotter(object):
                 vmax = numpy.real(numpy.median(
                     Pss) + (numpy.max(Pss) - numpy.median(Pss)) * 0.61803398875 + 50.0)
 
+            vp0 = numpy.real(numpy.percentile(Pss, 0))
+            vp100 = numpy.real(numpy.percentile(Pss, 100))
+            vp5 = numpy.real(numpy.percentile(Pss, 5))
+            vp95 = numpy.real(numpy.percentile(Pss, 95))
+            vi = numpy.real(numpy.min(Pss))
+            va = numpy.real(numpy.max(Pss))
+
+            #set vmin and vmax to any of the following options:
+            #vp0, vp100, vp5, vp95, v1, va, vmax, vmin
             im = ax.imshow(sti_psd_data, cmap=self.control.colormap, origin='lower', extent=extent,
-                           interpolation='nearest', vmin=vmin, vmax=vmax, aspect='auto')
+                           interpolation='nearest', vmin=vp5, vmax=vp95, aspect='auto')
 
             ax.set_ylabel('f (Hz)', fontsize=8)
 
